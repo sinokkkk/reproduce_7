@@ -1,0 +1,21 @@
+# 数据与权重
+data/
+checkpoint/
+output/
+*.npy
+*.ckpt
+*.pth
+*.t7
+*.tar
+
+# 编译产物（云端 make 重新编译即可，不上传）
+*.o
+*.a
+*.d
+*.so
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
