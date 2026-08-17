@@ -52,10 +52,11 @@ class ModelNetDataLoader(Dataset):
         shape_ids['test'] = [line.rstrip() for line in open(os.path.join(self.root, 'modelnet40_test.txt'))]
 
         assert (split == 'train' or split == 'test')
-        shape_names = ['_'.join(x.split('_')[0:-1]) for x in shape_ids[split]]
+        self.sample_ids = list(shape_ids[split])
+        shape_names = ['_'.join(x.split('_')[0:-1]) for x in self.sample_ids]
         # list of (shape_name, shape_txt_file_path) tuple
-        self.datapath = [(shape_names[i], os.path.join(self.root, shape_names[i], shape_ids[split][i]) + '.txt') for i
-                         in range(len(shape_ids[split]))]
+        self.datapath = [(shape_names[i], os.path.join(self.root, shape_names[i], self.sample_ids[i]) + '.txt') for i
+                         in range(len(self.sample_ids))]
         print('The size of %s data is %d'%(split,len(self.datapath)))
 
         self.cache_size = cache_size  # how many data points to cache in memory
