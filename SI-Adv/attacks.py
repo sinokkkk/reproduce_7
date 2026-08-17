@@ -464,103 +464,109 @@ class PointCloudAttack(object):
 
 
     def shape_invariant_query_attack(self, points, target):
-        """Blaxk-box query-based attack based on point-cloud sensitivity maps.
+        """Black-box query attack guided by shape-invariant sensitivity maps.
 
         Args:
-            points (torch.cuda.FloatTensor): the point cloud with N points, [1, N, 6].
-            target (torch.cuda.LongTensor): the label for points, [1].
+            points (torch.cuda.FloatTensor): point cloud with normals, [1, N, 6].
+            target (torch.cuda.LongTensor): ground-truth label, [1].
         """
-        normal_vec = points[:,:,-3:].data # N, [1, N, 3]
-        normal_vec = normal_vec / torch.sqrt(torch.sum(normal_vec ** 2, dim=-1, keepdim=True)) # N, [1, N, 3]
-        points = points[:,:,:3].data # P, [1, N, 3]
-        ori_points = points.data
-        # initialization
+        if points.size(0) != 1:
+            raise ValueError('Shape-invariant query attack requires batch size 1')
+
+        normal_vec = points[:, :, -3:].detach()
+        normal_norm = torch.sqrt(torch.sum(normal_vec ** 2, dim=-1, keepdim=True))
+        normal_vec = normal_vec / normal_norm.clamp_min(1e-12)
+        clean_points = points[:, :, :3].detach()
         query_costs = 0
+
+        def target_logits(point_cloud):
+            model_input = point_cloud.transpose(1, 2).detach()
+            if self.defense_method is not None:
+                return self.classifier(self.pre_head(model_input))
+            return self.classifier(model_input)
+
+        def attack_succeeded(logits):
+            if self.top5_attack:
+                top5 = logits.topk(5, dim=1)[1]
+                return not bool((top5 == target.view(-1, 1)).any().item())
+            return bool((logits.max(1)[1] != target).item())
+
+        def result_prediction(logits):
+            if self.top5_attack:
+                return -1 if attack_succeeded(logits) else target
+            return logits.max(1)[1]
+
         with torch.no_grad():
-            points = points.transpose(1, 2)
-            if not self.defense_method is None:
-                adv_logits = self.classifier(self.pre_head(points.detach()))
-            else:
-                adv_logits = self.classifier(points)
-            adv_target = adv_logits.max(1)[1]
+            current_logits = target_logits(clean_points)
             query_costs += 1
-        # if categorized wrong
-        if self.top5_attack:
-            target_top_5 = adv_logits.topk(5)[1]
-            if target in target_top_5:
-                adv_target = target
-            else:
-                adv_target = -1
-        if adv_target != target:
-            return points.transpose(1, 2), adv_target, query_costs
+        if attack_succeeded(current_logits):
+            return clean_points, result_prediction(current_logits), query_costs
 
-        # P -> P', detach()
-        points = points.transpose(1, 2)
-        new_points, spin_axis_matrix, translation_matrix = self.get_transformed_point_cloud(points.detach(), normal_vec)
-        new_points = new_points.detach()
-        new_points.requires_grad = True
+        transformed_points, spin_axis_matrix, translation_matrix = \
+            self.get_transformed_point_cloud(clean_points, normal_vec)
+        transformed_points = transformed_points.detach().requires_grad_(True)
 
-        # P' -> P
-        inputs = self.get_original_point_cloud(new_points, spin_axis_matrix, translation_matrix)
-        inputs = torch.min(torch.max(inputs, ori_points - self.eps), ori_points + self.eps)
-        inputs = inputs.transpose(1, 2) # P, [1, 3, N]
-
-        # get white-box gradients
-        logits = self.wb_classifier(inputs)
-        loss = self.CWLoss(logits, target, kappa=-999., tar=True, num_classes=self.num_class)
+        surrogate_input = self.get_original_point_cloud(
+            transformed_points, spin_axis_matrix, translation_matrix
+        ).transpose(1, 2)
+        logits = self.wb_classifier(surrogate_input)
+        loss = self.CWLoss(
+            logits, target, kappa=-999., tar=True, num_classes=self.num_class
+        )
         self.wb_classifier.zero_grad()
         loss.backward()
 
-        grad = new_points.grad.data # g, [1, N, 3]
-        grad[:,:,2] = 0.
-        new_points.requires_grad = False
-        rankings = torch.sqrt(grad[:,:,0] ** 2 + grad[:,:,1] ** 2) # \sqrt{g_{x'}^2+g_{y'}^2}, [1, N]
-        directions = grad / (rankings.unsqueeze(-1)+1e-16) # (g_{x'}/r,g_{y'}/r,0), [1, N, 3]
+        grad = transformed_points.grad.detach()
+        grad[:, :, 2] = 0.
+        rankings = torch.sqrt(grad[:, :, 0] ** 2 + grad[:, :, 1] ** 2)
+        directions = grad / (rankings.unsqueeze(-1) + 1e-16)
 
-        # rank the sensitivity map in the desending order
-        point_list = []
-        for i in range(points.size(1)):
-            point_list.append((i, directions[:,i,:], rankings[:,i].item()))
-        sorted_point_list = sorted(point_list, key=lambda c: c[2], reverse=True)
+        point_list = [
+            (index, directions[:, index, :], rankings[:, index].item())
+            for index in range(clean_points.size(1))
+        ]
+        sorted_point_list = sorted(point_list, key=lambda item: item[2], reverse=True)
 
-        # query loop
-        i = 0
-        best_loss = -999.
-        while best_loss < 0 and i < len(sorted_point_list):
-            idx, direction, _ = sorted_point_list[i]
-            for eps in {self.step_size, -self.step_size}:
-                pert = torch.zeros_like(new_points).cuda()
-                pert[:,idx,:] += eps * direction
-                inputs = new_points + pert
-                inputs = torch.matmul(spin_axis_matrix.transpose(-1, -2), inputs.unsqueeze(-1)) # U^T P', [1, N, 3, 1]
-                inputs = inputs - translation_matrix.unsqueeze(-1) # P = U^T P' - (P \cdot N) N, [1, N, 3, 1]
-                inputs = inputs.squeeze(-1).transpose(1, 2) # P, [1, 3, N]
-                # inputs = torch.clamp(inputs, -1, 1)
+        accepted_points = transformed_points.detach()
+        best_loss = self.CWLoss(
+            current_logits, target, kappa=-999., tar=True,
+            num_classes=self.num_class
+        ).item()
+        step_limit = min(self.max_steps, len(sorted_point_list))
+
+        for index, direction, _ in sorted_point_list[:step_limit]:
+            if attack_succeeded(current_logits):
+                break
+
+            for signed_step in (self.step_size, -self.step_size):
+                perturbation = torch.zeros_like(accepted_points)
+                perturbation[:, index, :] = signed_step * direction
+                candidate_transformed = accepted_points + perturbation
+                candidate_points = self.get_original_point_cloud(
+                    candidate_transformed, spin_axis_matrix, translation_matrix
+                )
+
                 with torch.no_grad():
-                    if not self.defense_method is None:
-                        logits = self.classifier(self.pre_head(inputs.detach()))
-                    else:
-                        logits = self.classifier(inputs.detach()) # [1, num_class]
+                    candidate_logits = target_logits(candidate_points)
                     query_costs += 1
-                loss = self.CWLoss(logits, target, kappa=-999., tar=True, num_classes=self.num_class)
-                if loss.item() > best_loss:
-                    # print(loss.item())
-                    best_loss = loss.item()
-                    new_points = new_points + pert
-                    adv_target = logits.max(1)[1]
+                candidate_loss = self.CWLoss(
+                    candidate_logits, target, kappa=-999., tar=True,
+                    num_classes=self.num_class
+                ).item()
+
+                if candidate_loss > best_loss:
+                    accepted_points = candidate_transformed.detach()
+                    current_logits = candidate_logits.detach()
+                    best_loss = candidate_loss
                     break
-            i += 1
-        # print(query_costs)
-        # print(target)
-        # print(adv_target)
-        adv_points = inputs.transpose(1, 2).data
-        if self.top5_attack:
-            target_top_5 = logits.topk(5)[1]
-            if target in target_top_5:
-                adv_target = target
-            else:
-                adv_target = -1
-        del grad
+
+        adv_points = self.get_original_point_cloud(
+            accepted_points, spin_axis_matrix, translation_matrix
+        ).detach()
+        with torch.no_grad():
+            final_logits = target_logits(adv_points)
+            query_costs += 1
+        adv_target = result_prediction(final_logits)
 
         return adv_points, adv_target, query_costs
 
