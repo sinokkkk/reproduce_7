@@ -116,9 +116,9 @@ def main():
         target = target.long()
 
         # start attack
-        t0 = time.clock()
+        t0 = time.perf_counter()
         adv_points, adv_target, query_costs = attack.run(points, target)
-        t1 = time.clock()
+        t1 = time.perf_counter()
         avg_time_cost += t1 - t0
         if not args.query_attack_method is None:
             print('>>>>>>>>>>>>>>>>>>>>>>>')
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset', type=str, default='ModelNet40',
                         choices=['ModelNet40', 'ShapeNetPart'])
     parser.add_argument('--data_path', type=str, 
-                        default='/data/modelnet40_normal_resampled/')
+                        default='/root/autodl-tmp/dataset/modelnet40_normal_resampled')
     parser.add_argument('--normal', action='store_true', default=False,
                         help='Whether to use normal information [default: False]')
     parser.add_argument('--num_workers', type=int, default=4,

@@ -1,21 +1,35 @@
-# 数据与权重
+# Datasets and model checkpoints stay outside Git.
 data/
+dataset/
+datasets/
 checkpoint/
-output/
-*.npy
+checkpoints/
 *.ckpt
 *.pth
+*.pt
 *.t7
 *.tar
 
-# 编译产物（云端 make 重新编译即可，不上传）
+# Build products are recreated on the training machine.
 *.o
 *.a
 *.d
 *.so
 
-# Python
+# Python environments and caches.
 __pycache__/
-*.pyc
+*.py[cod]
 .venv/
+venv/
+env/
 .ipynb_checkpoints/
+.pytest_cache/
+
+# Local editor/session files.
+.zcode/
+/NUL
+/新建 文本文档.txt
+
+# Experiment outputs are intentionally tracked for local analysis:
+# output/, results/, logs/, *.log, *.csv, *.json, *.npy, *.npz,
+# figures, Markdown, text files, and configuration files.
