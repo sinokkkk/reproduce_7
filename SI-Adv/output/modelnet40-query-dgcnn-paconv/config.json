@@ -1,0 +1,21 @@
+{
+  "dataset": "ModelNet40",
+  "data_path": "/root/autodl-tmp/dataset/modelnet40_normal_resampled",
+  "input_point_nums": 1024,
+  "batch_size": 1,
+  "transfer_attack_method": null,
+  "query_attack_method": "ours",
+  "surrogate_model": "dgcnn",
+  "target_model": "paconv",
+  "defense_method": null,
+  "step_size": 0.32,
+  "max_steps": 1024,
+  "eps": 0.32,
+  "seed": 2022,
+  "max_samples": null,
+  "git_commit": "45593f1aa172c7d3f76ef4c2899f347ff0369899",
+  "python": "3.8.18 (default, Sep 11 2023, 13:40:15) \n[GCC 11.2.0]",
+  "platform": "Linux-5.4.0-132-generic-x86_64-with-glibc2.17",
+  "torch": "1.10.1",
+  "torch_cuda": "11.3"
+}
