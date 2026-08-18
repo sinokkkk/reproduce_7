@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
+from tqdm import tqdm
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -116,13 +117,28 @@ def make_model(model_name, torch):
     return model
 
 
-def predict(model, points, batch_size, device, torch):
+def predict(model, points, batch_size, device, torch, description):
     predictions = []
-    with torch.no_grad():
-        for start in range(0, len(points), batch_size):
-            batch = torch.from_numpy(np.asarray(points[start:start + batch_size], dtype=np.float32))
-            logits = model(batch.transpose(1, 2).contiguous().to(device))
-            predictions.extend(logits.argmax(dim=1).detach().cpu().numpy().tolist())
+    progress = tqdm(
+        total=len(points),
+        desc=description,
+        unit='sample',
+        dynamic_ncols=True,
+    )
+    try:
+        with torch.no_grad():
+            for start in range(0, len(points), batch_size):
+                stop = min(start + batch_size, len(points))
+                batch = torch.from_numpy(
+                    np.asarray(points[start:stop], dtype=np.float32)
+                )
+                logits = model(batch.transpose(1, 2).contiguous().to(device))
+                predictions.extend(
+                    logits.argmax(dim=1).detach().cpu().numpy().tolist()
+                )
+                progress.update(stop - start)
+    finally:
+        progress.close()
     return np.asarray(predictions, dtype=np.int64)
 
 
@@ -133,6 +149,12 @@ def audit_run(name, run_dir, batch_size, device, torch, output_dir):
     if not target_model_name:
         raise ValueError('{} has no target_model'.format(run_dir))
     model = make_model(target_model_name, torch)
+    print(
+        'Starting {}: target_model={}, samples={}, batch_size={}'.format(
+            name, target_model_name, len(rows), batch_size
+        ),
+        flush=True,
+    )
     model, checkpoint_path = load_checkpoint(
         model, target_model_name, SIADV_ROOT / 'checkpoint' / config['dataset'], torch
     )
@@ -143,7 +165,12 @@ def audit_run(name, run_dir, batch_size, device, torch, output_dir):
     saved_adv_predictions = np.empty(len(rows), dtype=np.int64)
     clean_points = []
     adv_points = []
-    for row in rows:
+    for row in tqdm(
+        rows,
+        desc='{} load NPZ'.format(name),
+        unit='sample',
+        dynamic_ncols=True,
+    ):
         with np.load(str(row['_path']), allow_pickle=False) as payload:
             clean = payload['clean_xyz']
             adv = payload['adv_xyz']
@@ -156,8 +183,22 @@ def audit_run(name, run_dir, batch_size, device, torch, output_dir):
         labels[int(row['index'])] = int(row['label'])
         saved_adv_predictions[int(row['index'])] = int(row['adv_pred'])
 
-    clean_predictions[:] = predict(model, np.asarray(clean_points), batch_size, device, torch)
-    recomputed_adv = predict(model, np.asarray(adv_points), batch_size, device, torch)
+    clean_predictions[:] = predict(
+        model,
+        np.asarray(clean_points),
+        batch_size,
+        device,
+        torch,
+        '{} clean'.format(name),
+    )
+    recomputed_adv = predict(
+        model,
+        np.asarray(adv_points),
+        batch_size,
+        device,
+        torch,
+        '{} adversarial'.format(name),
+    )
     clean_correct = clean_predictions == labels
     raw_success = recomputed_adv != labels
     prediction_match = recomputed_adv == saved_adv_predictions
