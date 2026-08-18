@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
+from tqdm import tqdm
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -88,9 +89,20 @@ def main():
     grouped = defaultdict(list)
     source_files = []
 
+    print(
+        'Reading and normalizing {} ModelNet40 training samples...'.format(
+            len(sample_ids)
+        ),
+        flush=True,
+    )
     global_min = float('inf')
     global_max = float('-inf')
-    for index, sample_id in enumerate(sample_ids):
+    for index, sample_id in enumerate(tqdm(
+        sample_ids,
+        desc='load and normalize',
+        unit='sample',
+        dynamic_ncols=True,
+    )):
         category = category_from_sample_id(sample_id)
         if category not in category_set:
             raise ValueError(
@@ -135,7 +147,16 @@ def main():
     ))
     arrays = {}
     try:
-        for category in categories:
+        print(
+            'Writing {} per-category training arrays...'.format(len(categories)),
+            flush=True,
+        )
+        for category in tqdm(
+            categories,
+            desc='write arrays',
+            unit='category',
+            dynamic_ncols=True,
+        ):
             array = np.stack(grouped[category], axis=0).astype(np.float32, copy=False)
             expected_shape = (len(grouped[category]), args.num_point, 3)
             if array.shape != expected_shape:
@@ -150,6 +171,7 @@ def main():
                 'sha256': sha256_file(path),
             }
 
+        print('Writing statistics and manifest...', flush=True)
         stats_path = temporary_dir / 'ebp_stats.json'
         stats = {
             'train_min': global_min,
