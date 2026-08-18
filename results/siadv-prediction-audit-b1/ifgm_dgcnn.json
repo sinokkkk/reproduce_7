@@ -1,0 +1,15 @@
+{
+  "run": "ifgm_dgcnn",
+  "run_dir": "/root/autodl-tmp/reproduce_7/SI-Adv/output/modelnet40-ifgm-dgcnn",
+  "target_model": "dgcnn",
+  "checkpoint": "/root/autodl-tmp/reproduce_7/SI-Adv/checkpoint/ModelNet40/dgcnn.t7",
+  "sample_count": 2468,
+  "clean_accuracy": 0.9230145867098866,
+  "clean_correct_count": 2278,
+  "raw_asr": 0.9987844408427877,
+  "adversarial_accuracy": 0.0012155591572123178,
+  "strict_asr": 0.9986830553116769,
+  "saved_prediction_match_rate": 1.0,
+  "saved_adv_pred_disagreements": 0,
+  "csv": "ifgm_dgcnn.csv"
+}

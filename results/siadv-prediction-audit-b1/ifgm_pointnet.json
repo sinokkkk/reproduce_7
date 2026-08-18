@@ -1,0 +1,15 @@
+{
+  "run": "ifgm_pointnet",
+  "run_dir": "/root/autodl-tmp/reproduce_7/SI-Adv/output/modelnet40-ifgm-pointnet",
+  "target_model": "pointnet_cls",
+  "checkpoint": "/root/autodl-tmp/reproduce_7/SI-Adv/checkpoint/ModelNet40/pointnet_cls.pth",
+  "sample_count": 2468,
+  "clean_accuracy": 0.8905996758508914,
+  "clean_correct_count": 2198,
+  "raw_asr": 0.9975688816855753,
+  "adversarial_accuracy": 0.0024311183144246355,
+  "strict_asr": 0.997270245677889,
+  "saved_prediction_match_rate": 1.0,
+  "saved_adv_pred_disagreements": 0,
+  "csv": "ifgm_pointnet.csv"
+}

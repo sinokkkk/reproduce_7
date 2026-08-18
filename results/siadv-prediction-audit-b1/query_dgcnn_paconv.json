@@ -1,0 +1,15 @@
+{
+  "run": "query_dgcnn_paconv",
+  "run_dir": "/root/autodl-tmp/reproduce_7/SI-Adv/output/modelnet40-query-dgcnn-paconv",
+  "target_model": "paconv",
+  "checkpoint": "/root/autodl-tmp/reproduce_7/SI-Adv/checkpoint/ModelNet40/paconv.t7",
+  "sample_count": 2468,
+  "clean_accuracy": 0.9274716369529984,
+  "clean_correct_count": 2289,
+  "raw_asr": 0.9991896272285251,
+  "adversarial_accuracy": 0.0008103727714748784,
+  "strict_asr": 0.9991262560069899,
+  "saved_prediction_match_rate": 0.9991896272285251,
+  "saved_adv_pred_disagreements": 2,
+  "csv": "query_dgcnn_paconv.csv"
+}
