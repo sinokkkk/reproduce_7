@@ -67,7 +67,11 @@ def parse_args():
     stats.add_argument(
         '--train-data',
         type=Path,
-        help='Raw GPointNet training .npy used to derive global ebp min/max.',
+        nargs='+',
+        help=(
+            'One or more raw GPointNet training .npy files used together to '
+            'derive the global ebp min/max.'
+        ),
     )
     stats.add_argument(
         '--train-stats',
@@ -121,22 +125,35 @@ def scalar(value, field, source):
 
 def read_stats(args):
     if args.train_data is not None:
-        path = args.train_data.resolve()
-        if not path.is_file():
-            raise FileNotFoundError('Missing training data: {}'.format(path))
-        data = np.load(str(path), mmap_mode='r', allow_pickle=False)
-        if data.ndim < 2 or data.shape[-1] != 3:
-            raise ValueError(
-                'Training data must have shape [..., 3], got {}'.format(data.shape)
-            )
-        if not np.isfinite(data).all():
-            raise ValueError('Training data contains non-finite values')
-        train_min = float(data.min())
-        train_max = float(data.max())
+        files = []
+        minima = []
+        maxima = []
+        for supplied_path in args.train_data:
+            path = supplied_path.resolve()
+            if not path.is_file():
+                raise FileNotFoundError('Missing training data: {}'.format(path))
+            data = np.load(str(path), mmap_mode='r', allow_pickle=False)
+            if data.ndim < 2 or data.shape[-1] != 3:
+                raise ValueError(
+                    'Training data must have shape [..., 3], got {} in {}'.format(
+                        data.shape, path
+                    )
+                )
+            if not np.isfinite(data).all():
+                raise ValueError('Training data contains non-finite values: {}'.format(path))
+            minima.append(float(data.min()))
+            maxima.append(float(data.max()))
+            files.append({
+                'path': str(path),
+                'shape': list(data.shape),
+                'dtype': str(data.dtype),
+                'sha256': sha256_file(path),
+            })
+        train_min = min(minima)
+        train_max = max(maxima)
         source = {
             'kind': 'train_data',
-            'path': str(path),
-            'sha256': sha256_file(path),
+            'files': files,
         }
     else:
         path = args.train_stats.resolve()
@@ -250,19 +267,27 @@ def validate_input(manifest, input_dir, requested_attacks):
         raise ValueError('Manifest sample IDs are not unique')
 
     array_paths = {}
-    array_specs = [('clean_xyz', arrays['clean_xyz']['file'])]
-    array_specs.extend(
-        (attack_name, attacks[attack_name]['array'])
-        for attack_name in attack_names
-    )
-    for key, array_name in array_specs:
+    array_specs = [('clean_xyz', 'clean_xyz', arrays['clean_xyz']['file'])]
+    for attack_name in attack_names:
+        array_key = attack_name
+        if array_key not in arrays:
+            raise ValueError(
+                'Manifest attack {} has no matching arrays entry'.format(attack_name)
+            )
+        expected_file = attacks[attack_name].get('array')
+        actual_file = arrays[array_key].get('file')
+        if expected_file != actual_file:
+            raise ValueError(
+                'Manifest attack {} references {!r}, but arrays entry uses {!r}'.format(
+                    attack_name, expected_file, actual_file
+                )
+            )
+        array_specs.append((attack_name, array_key, actual_file))
+
+    for key, array_key, filename in array_specs:
         if key in array_paths:
             continue
-        if array_name not in arrays:
-            raise ValueError(
-                'Manifest attack {} references missing array {}'.format(key, array_name)
-            )
-        path = input_dir / arrays[array_name]['file']
+        path = input_dir / filename
         array = np.load(str(path), mmap_mode='r', allow_pickle=False)
         expected_shape = (count, point_count, 3)
         if array.shape != expected_shape or array.dtype != np.float32:

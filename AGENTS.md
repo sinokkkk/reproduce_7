@@ -81,7 +81,7 @@ After a 1024-point checkpoint exists, run the paired energy evaluation from the 
 python GPointNet/tools/energy_eval_torch.py \
   --input-dir results/gpointnet-inputs/modelnet40-siadv-1024 \
   --checkpoint /path/to/checkpoint_1024.ckpt \
-  --train-data /path/to/modelnet40_train.npy \
+  --train-data GPointNet/data/*_train.npy \
   --output-dir results/gpointnet-energy/modelnet40-siadv-1024
 ```
 
