@@ -1,0 +1,605 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-18T11:34:27.576519+00:00",
+  "input_manifest": {
+    "path": "/root/autodl-tmp/reproduce_7/results/gpointnet-inputs/modelnet40-siadv-1024/manifest.json",
+    "sha256": "0343dfbb414e08aa09bacf85121d13c49d5692130dbb7da5f8584889ffe59db9"
+  },
+  "checkpoint": {
+    "path": "/root/autodl-tmp/reproduce_7/GPointNet/output/pytorch/modelnet40_default_modelnet40_siadv_1024/checkpoint_2000.ckpt",
+    "sha256": "1feadf9c93dab3c407019e335002b48ff4c69a0291a041d9fc109a133296cd52"
+  },
+  "model": {
+    "num_point": 1024,
+    "point_dim": 3,
+    "net_type": "default",
+    "batch_norm": "ln",
+    "normalize": "ebp",
+    "checkpoint_ref_sigma": 0.3,
+    "device": "cuda"
+  },
+  "normalization": {
+    "method": "GPointNet ebp global scalar min/max",
+    "train_min": -0.9999976754188538,
+    "train_max": 0.9999998211860657,
+    "source": {
+      "kind": "train_data",
+      "files": [
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/airplane_train.npy",
+          "shape": [
+            626,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "a3d93e22cde06b69c9a6180d5bd482eaddf5db3616211ed596d628c75ca370c7"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/bathtub_train.npy",
+          "shape": [
+            106,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "9144699e517ef7a42bc90210ccb48cac17883200b2fcd6a696c57e41e6b9d78d"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/bed_train.npy",
+          "shape": [
+            515,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "3198113fcdf185a46f2e02628821214cf2318a72266c9e6e227d42c4f13b8398"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/bench_train.npy",
+          "shape": [
+            173,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "a980bdcedc2e11b28bfad135367eb19a0a7dd7ae88b62a7dcd97bca9da15d77e"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/bookshelf_train.npy",
+          "shape": [
+            572,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "dd16e06e0afec3513178569a79938f1e60b6afed95e3daed05a83d1f188a27f0"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/bottle_train.npy",
+          "shape": [
+            335,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "31747d97a852063acb1b290daf72378a30c17db87bdbdca09f8ba3bc62eec9cd"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/bowl_train.npy",
+          "shape": [
+            64,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "b161df45e18f144487f68c1887e211e169c9ea20bb9b81adbaf7953e1b741e36"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/car_train.npy",
+          "shape": [
+            197,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "bf343d088c835e98e3c2acf9d40da2fdbb5e89abbd4c980ac2c06e574bb12293"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/chair_train.npy",
+          "shape": [
+            889,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "4139d7e14745a2ec53834a095645d1151152baaf64ea350d11cc12511056a42c"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/cone_train.npy",
+          "shape": [
+            167,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "02df4364291885c3073e7a4fd3d108e57c32354866092b3f0b49831a64aa5724"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/cup_train.npy",
+          "shape": [
+            79,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "050d3d4458c280f627afa5f42c6bff833764067cc914cbffd86b3f8f9f6193e0"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/curtain_train.npy",
+          "shape": [
+            138,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "7364d7f6cefdd49cc09f7120b88d3b6ebde14a47a01c2aae5b0936235c1fe30c"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/desk_train.npy",
+          "shape": [
+            200,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "2e602c29cede9532e95d832bd424d311c5e970f7ab224e850e5e69ad7d7acf94"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/door_train.npy",
+          "shape": [
+            109,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "180f3e253ec2d1096b82e06b1140b0275621f5c935b11934739fd3b276790063"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/dresser_train.npy",
+          "shape": [
+            200,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "6930eeac815e8baf867f39b070f5f4296dd5418e3c3801d201a19f542e62b6e7"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/flower_pot_train.npy",
+          "shape": [
+            149,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "a84a2ff9ff217abe6e744acdc8110654b5a108307056ae283a419490ff2ac990"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/glass_box_train.npy",
+          "shape": [
+            171,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "c5d3a72db85fc7a3c1fbca02dc0d75b001e66a5c6501f1e691dd5c5218bb1efe"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/guitar_train.npy",
+          "shape": [
+            155,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "6738fae4a1ab200d44e475dca5efc0ad9583c2228c121045c7e8d0a6ae3a9476"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/keyboard_train.npy",
+          "shape": [
+            145,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "b665fab4c2dd564cf104c1388d77fd14956287e086ea7bae49c635bb35f2f641"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/lamp_train.npy",
+          "shape": [
+            124,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "e36a40ec68be2a14972e710f2e2ac1f07758a3907a58e0585575fe5c598987c9"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/laptop_train.npy",
+          "shape": [
+            149,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "28d71359c001b308b04b42539f0712e9b49c9c8f0c62b8ca2169d1330bf16ff0"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/mantel_train.npy",
+          "shape": [
+            284,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "bc1226c4768b96cc077eaad99fb7d570be13f46766f7d7f7c0781c03755f4419"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/monitor_train.npy",
+          "shape": [
+            465,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "87557869d64cce7b439a755cd49ab145abfc3d66265de0ae3763c6c2c6d4285a"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/night_stand_train.npy",
+          "shape": [
+            200,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "c1a83fa8ee1d5a7ff4b24fe720b4735a07ba96c6469a4f3736cd367fa0eb4089"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/person_train.npy",
+          "shape": [
+            88,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "7b0ecc9007eff02dc366dd311c1d66d96373d8f11584ba67024a407cf46cfc08"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/piano_train.npy",
+          "shape": [
+            231,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "1d96cf8f9e818dbab9749fcb823126b0287f7514a25b5238fd23b4ca3a8e61e4"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/plant_train.npy",
+          "shape": [
+            240,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "c40ffc6918b979e36948112fcb4d07f505719e884eee99b90f22783bce799c6b"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/radio_train.npy",
+          "shape": [
+            104,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "affa73a384f0d0996f1dc89c9ecb08c45cccb2df1bd590ea45ec57e1dad5d979"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/range_hood_train.npy",
+          "shape": [
+            115,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "008cd47edc601c3242edd6e290682a0bcaf3bd68d35308d30f6281022ca18ca0"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/sink_train.npy",
+          "shape": [
+            128,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "c5a4de430239152e1a0dce6aa66730498225c9bcf93547dc898acce119f699a3"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/sofa_train.npy",
+          "shape": [
+            680,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "f69361d845fe970fee865a5e146f853d5613198a4bc266a2f0e362b7f0255243"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/stairs_train.npy",
+          "shape": [
+            124,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "0b1449c449df9a337d1140d85428efbca7bb5fcf06b1686186a517561d3e12a0"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/stool_train.npy",
+          "shape": [
+            90,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "5efd219afd7feab0fa8c317785209986e2ff0ce5414f21657abc13695b65a966"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/table_train.npy",
+          "shape": [
+            392,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "554403ca92f0c21d24f696ea1bc18d924e18f3e06227aed9467364be56fdd690"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/tent_train.npy",
+          "shape": [
+            163,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "a71ba01cecf066f738c7974cb32bb6d15313f4fee006045894d36084361c71e9"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/toilet_train.npy",
+          "shape": [
+            344,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "19a27e89614c0acf0a9b873f3026f0cc4bc7c20492e878e02961036f002540fe"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/tv_stand_train.npy",
+          "shape": [
+            267,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "daef3f62f1ed6fc127231e07605aa58a71199b69c017cbf6704d51bf240fc453"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/vase_train.npy",
+          "shape": [
+            475,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "bd57d74415b3d40016dbd7b12275fda9e7ffbfa4e7f602bb2c882ff683d8dd09"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/wardrobe_train.npy",
+          "shape": [
+            87,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "4c49f5443471c227799371f8d2fb66444aa444c3b9402b2b3fde5ad04a3a8df9"
+        },
+        {
+          "path": "/root/autodl-tmp/reproduce_7/GPointNet/data/modelnet40-siadv-1024/xbox_train.npy",
+          "shape": [
+            103,
+            1024,
+            3
+          ],
+          "dtype": "float32",
+          "sha256": "76294e2a0b9e34af0b1409f751f73bd53c925eb2e80c6fbeb9e9aebe11859698"
+        }
+      ],
+      "train_min": -0.9999976754188538,
+      "train_max": 0.9999998211860657
+    },
+    "formula": "((x - train_min) / (train_max - train_min)) * 2 - 1",
+    "same_transform_for_clean_and_adv": true,
+    "random_sampling": false,
+    "augmentation_noise": false
+  },
+  "energy": {
+    "sigma": 0.3,
+    "score_definition": "energy_net(X) = f_theta(X)",
+    "prior_definition": "sum(X^2) / (2 * sigma^2)",
+    "full_energy_definition": "-f_theta(X) + sum(X^2) / (2 * sigma^2)"
+  },
+  "sample_count": 2468,
+  "point_count": 1024,
+  "attacks": {
+    "ifgm_pointnet": {
+      "mean_score": 149314.49201339646,
+      "mean_prior": 2081.5742455085247,
+      "mean_energy": -147232.91767119124,
+      "mean_delta_score": -236.1463609197731,
+      "mean_delta_energy": 237.2948807232577,
+      "std_delta_energy": 376.5820992507449,
+      "min_delta_energy": -1219.234375,
+      "max_delta_energy": 3941.65625
+    },
+    "ifgm_dgcnn": {
+      "mean_score": 149182.30331683042,
+      "mean_prior": 2085.9731744552932,
+      "mean_energy": -147096.33003064222,
+      "mean_delta_score": -368.3350574858185,
+      "mean_delta_energy": 373.88252127228526,
+      "std_delta_energy": 527.9756649921135,
+      "min_delta_energy": -784.0,
+      "max_delta_energy": 6484.1875
+    },
+    "query_dgcnn_paconv": {
+      "mean_score": 148453.76674242807,
+      "mean_prior": 2092.744219478564,
+      "mean_energy": -146361.02258597547,
+      "mean_delta_score": -1096.8716318881686,
+      "mean_delta_energy": 1109.1899659390194,
+      "std_delta_energy": 1496.055413291309,
+      "min_delta_energy": -1360.640625,
+      "max_delta_energy": 18236.3125
+    }
+  },
+  "arrays": {
+    "clean_score": {
+      "file": "clean_score.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "d1791233ede61be7b4bd20fc0ebb23ae98ba7deff1efe5491e16f33a7e44ad42"
+    },
+    "clean_prior": {
+      "file": "clean_prior.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "30781774746b2aea4d3d11f916f9cb2f3121dd46e38b537d33f1da141b1a4a8e"
+    },
+    "clean_energy": {
+      "file": "clean_energy.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "de34417676a42c5cd52c30638eea31562badb63b454cb2c0f41d78d1f25d58e5"
+    },
+    "ifgm_pointnet_score": {
+      "file": "ifgm_pointnet_score.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "49a3011b420d2c7419c420f0232736de08b462f4f560e4a5a71f9b8d2e33580a"
+    },
+    "ifgm_pointnet_prior": {
+      "file": "ifgm_pointnet_prior.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "4e36f2e71eb60728afdd9a55066f730813d7e1e65dfbbac4957edb55098ad11c"
+    },
+    "ifgm_pointnet_energy": {
+      "file": "ifgm_pointnet_energy.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "0329191935e01f95692076208c632853643144aec6f885e987d7a74ed7f0b89b"
+    },
+    "ifgm_dgcnn_score": {
+      "file": "ifgm_dgcnn_score.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "bcfa60324827a583b715499706da711d94c35cda54eaaaa6a4053d22785a80c5"
+    },
+    "ifgm_dgcnn_prior": {
+      "file": "ifgm_dgcnn_prior.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "ebdc9939d29007aad191025e58e4ada180f7326911b7473f7d4319ba444edb5e"
+    },
+    "ifgm_dgcnn_energy": {
+      "file": "ifgm_dgcnn_energy.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "53547b26fbe0144e83143e69585e68908ea475f149c07695accc854a27c4cbea"
+    },
+    "query_dgcnn_paconv_score": {
+      "file": "query_dgcnn_paconv_score.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "0fa04de2b1d0aed8472eff4d80857f78d878f301c0eb3c7a11c5a0a8f2a11a25"
+    },
+    "query_dgcnn_paconv_prior": {
+      "file": "query_dgcnn_paconv_prior.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "facbb274b968a27a54401338214d10e15be7ac3edbf64a04af4712c85f2c0dc2"
+    },
+    "query_dgcnn_paconv_energy": {
+      "file": "query_dgcnn_paconv_energy.npy",
+      "shape": [
+        2468
+      ],
+      "dtype": "float64",
+      "bytes": 19872,
+      "sha256": "0e542cc9525a6f0f2ad79415db2ae09f3cf33d02dacf65af2056180af736a16a"
+    }
+  },
+  "csv": {
+    "file": "per_sample_energy.csv",
+    "rows": 7404,
+    "columns": [
+      "index",
+      "sample_id",
+      "label",
+      "attack",
+      "score_clean",
+      "prior_clean",
+      "energy_clean",
+      "score_adv",
+      "prior_adv",
+      "energy_adv",
+      "delta_score",
+      "delta_energy"
+    ]
+  }
+}
