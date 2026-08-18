@@ -128,6 +128,8 @@ def read_stats(args):
         files = []
         minima = []
         maxima = []
+        if not args.train_data:
+            raise ValueError('--train-data requires at least one file')
         for supplied_path in args.train_data:
             path = supplied_path.resolve()
             if not path.is_file():

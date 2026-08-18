@@ -75,13 +75,40 @@ python src/model_point_torch.py -do_evaluation 0
 python tools/test_torch.py -checkpoint_path <ckpt> -synthesis
 ```
 
-After a 1024-point checkpoint exists, run the paired energy evaluation from the repository root:
+First build GPointNet's 1024-point training arrays from the same AutoDL ModelNet40 source used by SI-Adv. This applies SI-Adv's first-1024 and per-shape unit-sphere preprocessing and writes the global `ebp` statistics:
+
+```bash
+python tools/prepare_gpointnet_modelnet40_train.py \
+  --modelnet-root /root/autodl-tmp/dataset/modelnet40_normal_resampled \
+  --output-dir GPointNet/data/modelnet40-siadv-1024 \
+  --num-point 1024
+```
+
+From `GPointNet/`, train an actual 1024-point checkpoint. The `default` network is used here so its architecture is explicit; `-do_evaluation 0` skips optional CUDA structural metrics:
+
+```bash
+mkdir -p output/ref_pcs
+python src/model_point_torch.py \
+  -category modelnet40 \
+  -data_path data/modelnet40-siadv-1024 \
+  -net_type default \
+  -num_point 1024 \
+  -batch_size 32 \
+  -num_steps 2000 \
+  -eval_step 50 \
+  -do_evaluation 0 \
+  -stable_check 0 \
+  -cuda 0 \
+  -output_dir modelnet40_siadv_1024
+```
+
+After a 1024-point checkpoint exists, run the paired energy evaluation from the repository root. Pass all 40 generated training arrays so the evaluator reproduces the same global min/max used by training:
 
 ```bash
 python GPointNet/tools/energy_eval_torch.py \
   --input-dir results/gpointnet-inputs/modelnet40-siadv-1024 \
-  --checkpoint /path/to/checkpoint_1024.ckpt \
-  --train-data GPointNet/data/*_train.npy \
+  --checkpoint GPointNet/output/pytorch/modelnet40_default_modelnet40_siadv_1024/checkpoint_2000.ckpt \
+  --train-data GPointNet/data/modelnet40-siadv-1024/*_train.npy \
   --output-dir results/gpointnet-energy/modelnet40-siadv-1024
 ```
 

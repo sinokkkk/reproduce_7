@@ -134,6 +134,7 @@ class async_evaluation(object):
 def save_evaluation_ref(dataloader, category):
 
     path = "output/ref_pcs/%s.npy" % category
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     if not os.path.isfile(path):
         ref_pcs = [pcs for pcs in dataloader]
         ref_pcs = torch.cat(ref_pcs).cpu().data.numpy()
@@ -336,8 +337,11 @@ class PointCloudDataCollator(object):
                     np.random.choice(np.arange(len(pcd)), size=self.num_point - len(pcd), replace=True)])
                 out_pcd.append(pcd[idx])
             else:
-                out_pcd.append(pcd[:, :self.num_point])
-        out_pcd = torch.stack(out_pcd)
+                out_pcd.append(pcd[:self.num_point])
+        out_pcd = torch.stack([
+            pcd if torch.is_tensor(pcd) else torch.as_tensor(pcd)
+            for pcd in out_pcd
+        ])
         out_pcd = out_pcd + torch.randn(out_pcd.shape, device=out_pcd.device) * self.argment_noise
         if self.normalize == "per_shape": 
             mean = torch.mean(out_pcd, dim=1, keepdim=True)
@@ -361,14 +365,18 @@ class PointCloudDataSet(torch.utils.data.dataset.Dataset):
         if cate_temp == "modelnet40":
             categories = ['cup', 'bookshelf', 'lamp', 'stool', 'desk', 'toilet', 'night_stand', 'bowl', 'door', 'flower_pot', 'plant', 'stairs', 'bottle', 'mantel', 'sofa', 'laptop', 'xbox', 'tent', 'piano', 'car', 'wardrobe', 'tv_stand', 'cone', 'range_hood', 'bathtub', 'curtain', 'sink', 'glass_box', 'bed', 'chair', 'person', 'radio', 'dresser', 'bench', 'airplane', 'guitar', 'keyboard', 'table', 'monitor', 'vase']
             for cat in categories:
-                d = np.load('data/%s_train.npy' % cat)
-                train_data.append(d)
+                data_file = os.path.join(config.data_path, '%s_train.npy' % cat)
+                if not os.path.isfile(data_file):
+                    raise FileNotFoundError('Missing GPointNet training data: %s' % data_file)
+                train_data.append(np.load(data_file))
 
         elif cate_temp == "modelnet10":
             categories = ['desk', 'toilet', 'night_stand', 'sofa', 'bathtub', 'bed', 'chair', 'dresser', 'table', 'monitor']
             for cat in categories:
-                d = np.load('data/%s_train.npy' % cat)
-                train_data.append(d)
+                data_file = os.path.join(config.data_path, '%s_train.npy' % cat)
+                if not os.path.isfile(data_file):
+                    raise FileNotFoundError('Missing GPointNet training data: %s' % data_file)
+                train_data.append(np.load(data_file))
 
         elif cate_temp == "partnet": 
 
@@ -411,7 +419,10 @@ class PointCloudDataSet(torch.utils.data.dataset.Dataset):
             # for pnt in temp_data:
             #     train_data.append(np.concatenate([pnt, np.zeros(([pnt.shape[0], 1]))], 1))
         else: 
-            train_data = [np.load('data/%s_train.npy' % category)]
+            data_file = os.path.join(config.data_path, '%s_train.npy' % category)
+            if not os.path.isfile(data_file):
+                raise FileNotFoundError('Missing GPointNet training data: %s' % data_file)
+            train_data = [np.load(data_file)]
         
 
         if len(train_data[0].shape) == 3:
