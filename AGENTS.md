@@ -53,6 +53,9 @@ Do not feed SI-Adv output directly to a default checkpoint without checking its 
 - `model.energy_net(x)` returns the learned score `f_theta(X)`, not the paper's full energy. Report both score and
   `E_theta(X) = -f_theta(X) + ||X||^2 / (2*sigma^2)` (default `sigma=0.3`).
 - Compare energy only under the same checkpoint, point count, normalization, and sigma.
+- `tools/prepare_gpointnet_inputs.py` audits all three committed runs and writes the aligned corpus under `results/gpointnet-inputs/`.
+- `GPointNet/tools/energy_eval_torch.py` requires a 1024-point Lightning checkpoint plus the training-set global `ebp` min/max; it writes score, Gaussian-prior, full-energy, and delta-energy outputs without resampling or noise.
+- `tools/audit_siadv_predictions.py` recomputes saved clean/adversarial predictions and reports strict clean-correct ASR; it does not rerun an attack.
 
 ## Checks
 
@@ -70,6 +73,25 @@ GPointNet entry points:
 ```bash
 python src/model_point_torch.py -do_evaluation 0
 python tools/test_torch.py -checkpoint_path <ckpt> -synthesis
+```
+
+After a 1024-point checkpoint exists, run the paired energy evaluation from the repository root:
+
+```bash
+python GPointNet/tools/energy_eval_torch.py \
+  --input-dir results/gpointnet-inputs/modelnet40-siadv-1024 \
+  --checkpoint /path/to/checkpoint_1024.ckpt \
+  --train-data /path/to/modelnet40_train.npy \
+  --output-dir results/gpointnet-energy/modelnet40-siadv-1024
+```
+
+To audit strict ASR using the existing SI-Adv checkpoints:
+
+```bash
+python tools/audit_siadv_predictions.py \
+  --device cuda \
+  --batch-size 32 \
+  --output-dir results/siadv-prediction-audit
 ```
 
 ## Git and Artifacts
